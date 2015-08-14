@@ -3,14 +3,16 @@ var os = require('os');
 var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
+var moment = require('moment');
 
-
-var XmlReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
+var CDashReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
 	var log = logger.create('reporter.xml');
-	var reporterConfig = config.xmlReporter || {};
+	var reporterConfig = config.cdashReporter || {};
 	var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile || 'test-results.testxml'));
 
-	var xml;
+	// var xml;
+	var site;
+	var testing;
 	var pendingFileWritings = 0;
 	var fileWritingFinished = function () { };
 	var allMessages = [];
@@ -22,17 +24,31 @@ var XmlReporter = function (baseReporterDecorator, config, logger, helper, forma
 	}];
 
 	this.onRunStart = function () {
-		xml = builder.create('Tests');
+		site = builder.create('Site', {version: '1.0', encoding: 'UTF-8'}); // XML root
+    site.att('Name', 'Darth-Mac');
+		site.att('BuildStamp', '20150813-1157-Temasys-universal-trial');
+		// TODO: add attibutes to the site node
+
+		testing = site.ele('Testing');
+
+    var time = moment();
+    testing.ele('StartTestTime', time.format('X'));
+		testing.ele('StartDateTime', time.format('MMM D HH:mm Z')); //TODO display timezone in letters
+		
+		// TODO: add child TestList (contains a list of test FullName ??)
 	};
 
 	this.onBrowserStart = function(browser) {
 	};
 	
 	this.onBrowserComplete = function(browser) {
+    // TODO: add child EndDateTime
+    // TODO: add child EndTestTime
+    // TODO: add child ElapsedMinutes
 	};
 
 	this.onRunComplete = function () {
-		var xmlToOutput = xml;
+		var xmlToOutput = site;
 
 		pendingFileWritings++;
 		helper.mkdirIfNotExists(path.dirname(outputFile), function () {
@@ -52,30 +68,32 @@ var XmlReporter = function (baseReporterDecorator, config, logger, helper, forma
 		allMessages.length = 0;
 	};
 
-	this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
-		var spec = xml.ele('Test');
+	this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) { 		//for each test 
+		var pass;
+    if (result.success) {
+      pass = 'Passed';
+    }
+    else if (result.skipped) {
+      pass = 'Skipped';
+    }
+    else { // Test failed 
+      pass = 'Failed';
+    }
 
-		if (result.suite && result.suite[0] === 'Jasmine__TopLevel__Suite') {
-			result.suite.shift();
-		}
-		
-		spec.ele('Name', result.suite + ' ' + result.description + ' (' + browser.name + ')');
-		spec.ele('DisplayName', result.suite + ' ' + result.description + ' (' + browser.name + ')');
+    var spec = testing;
 
-		if (result.success) {
-			spec.ele('Outcome', 'Passed');
-		}
-		else if (result.skipped) {
-			spec.ele('Outcome', 'Skipped');
-		}
-		else {
-			spec.ele('Outcome', 'Failed');
-			var errors = '';
-			result.log.forEach(function (err) {
-				errors += formatError(err) + '\r\n\r\n';
-			});
-			spec.ele('ErrorStackTrace', errors);
-		}
+    var test = testing.ele('Test');
+    test.att('Status', pass);
+    test.ele('Name', result.description);
+		test.ele('FullName', result.suite + ' ' + result.description + ' (' + browser.name + ')');
+    test.ele('Path');
+    test.ele('FullCommandLine');
+    test.ele('Results');
+
+    // if (result.suite && result.suite[0] === 'Jasmine__TopLevel__Suite') {
+    //   result.suite.shift();
+    // }
+    
 	};
 
 	// wait for writing all the xml files, before exiting
@@ -86,11 +104,15 @@ var XmlReporter = function (baseReporterDecorator, config, logger, helper, forma
 			done();
 		}
 	};
+
+  this.makeTestNode = function() {
+
+  }
 };
 
-XmlReporter.$inject = ['baseReporterDecorator', 'config', 'logger', 'helper', 'formatError'];
+CDashReporter.$inject = ['baseReporterDecorator', 'config', 'logger', 'helper', 'formatError'];
 
 // PUBLISH DI MODULE
 module.exports = {
-	'reporter:xml': ['type', XmlReporter]
+	'reporter:cdash': ['type', CDashReporter]
 };
