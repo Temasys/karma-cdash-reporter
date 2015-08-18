@@ -13,6 +13,8 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 	// var xml;
 	var site;
 	var testing;
+  var testList;
+  var startTime;
 	var pendingFileWritings = 0;
 	var fileWritingFinished = function () { };
 	var allMessages = [];
@@ -24,17 +26,40 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 	}];
 
 	this.onRunStart = function () {
-		site = builder.create('Site', {version: '1.0', encoding: 'UTF-8'}); // XML root
+		site = builder.create('Site', 
+    {version: '1.0', encoding: 'UTF-8'}); // XML root
+    site.att('BuildName', 'plugin-autobuild-dev');
+    site.att('BuildStamp', '20150813-1157-Temasys-universal-trial');
     site.att('Name', 'Darth-Mac');
-		site.att('BuildStamp', '20150813-1157-Temasys-universal-trial');
+    site.att('Generator', 'ctest-3.3.0');
+    site.att('CompilerName', '');
+    site.att('OSName', 'Mac OS X');
+    site.att('Hostname', 'Darth-Mac.local');
+    site.att('OSRelease', '10.10.4');
+    site.att('OSVersion', '14E46');
+    site.att('OSPlatform', 'x86_64');
+    site.att('Is64Bits', '1');
+    site.att('VendorString', 'GenuineIntel');
+    site.att('VendorID', 'Intel Corporation');
+    site.att('FamilyID', '6');
+    site.att('ModelID', '62');
+    site.att('ProcessorCacheSize', '32768');
+    site.att('NumberOfLogicalCPU', '12');
+    site.att('NumberOfPhysicalCPU', '6');
+    site.att('TotalVirtualMemory', '2048');
+    site.att('TotalPhysicalMemory', '16384');
+    site.att('LogicalProcessorsPerPhysical', '16');
+    site.att('ProcessorClockFrequency', '3500');
 		// TODO: add attibutes to the site node
 
 		testing = site.ele('Testing');
 
-    var time = moment();
-    testing.ele('StartTestTime', time.format('X'));
-		testing.ele('StartDateTime', time.format('MMM D HH:mm Z')); //TODO display timezone in letters
+    startTime = moment();
+    testing.ele('StartTestTime', startTime.format('X'));
+		testing.ele('StartDateTime', startTime.format('MMM D HH:mm Z')); //TODO display timezone in letters
 		
+    testList = site.ele('TestList');
+
 		// TODO: add child TestList (contains a list of test FullName ??)
 	};
 
@@ -42,12 +67,18 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 	};
 	
 	this.onBrowserComplete = function(browser) {
+  };
+
+  this.onRunComplete = function () {
     // TODO: add child EndDateTime
     // TODO: add child EndTestTime
     // TODO: add child ElapsedMinutes
-	};
 
-	this.onRunComplete = function () {
+    var endTime = moment();
+    testing.ele('EndTestTime', endTime.format('X'));
+    testing.ele('EndDateTime', endTime.format('MMM D HH:mm Z')); 
+    testing.ele('ElapsedMinutes', (endTime.diff(startTime, 'minutes')).toString()); 
+
 		var xmlToOutput = site;
 
 		pendingFileWritings++;
@@ -69,7 +100,9 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 	};
 
 	this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) { 		//for each test 
-		var pass;
+    var testFullName = result.suite + ' ' + result.description + ' (' + browser.name + ')';
+
+    var pass;
     if (result.success) {
       pass = 'Passed';
     }
@@ -80,15 +113,15 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
       pass = 'Failed';
     }
 
-    var spec = testing;
+    testList.ele('Test', testFullName);
 
     var test = testing.ele('Test');
     test.att('Status', pass);
     test.ele('Name', result.description);
-		test.ele('FullName', result.suite + ' ' + result.description + ' (' + browser.name + ')');
-    test.ele('Path');
-    test.ele('FullCommandLine');
-    test.ele('Results');
+		test.ele('FullName', testFullName);
+    test.ele('Path', './Tests/AdapterJS');
+    test.ele('FullCommandLine', 'grunt test');
+    test.ele('Results', pass);
 
     // if (result.suite && result.suite[0] === 'Jasmine__TopLevel__Suite') {
     //   result.suite.shift();
