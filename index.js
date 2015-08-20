@@ -9,6 +9,8 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.xml');
   var reporterConfig = config.cdashReporter || {};
   var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile || 'test-results.testxml'));
+  var siteConfigPath = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.siteConfig));
+  var siteConfig = JSON.parse(fs.readFileSync(siteConfigPath, 'utf8'));
 
   var site;
   var testing;
@@ -26,16 +28,16 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 
   this.onRunStart = function () {
     site = builder.create('Site', 
-    {version: '1.0', encoding: 'UTF-8'}); // XML root
-    site.att('BuildName', 'plugin-autobuild-dev');
-    site.att('BuildStamp', '20150813-1157-Temasys-universal-trial');
-    site.att('Name', 'Darth-Mac');
-    site.att('Generator', 'ctest-3.3.0');
+      {version: '1.0', encoding: 'UTF-8'}); // XML root
+    site.att('BuildName', siteConfig.BuildName);
+    site.att('BuildStamp', siteConfig.BuildStamp);
+    site.att('Name', siteConfig.Name);
+    site.att('Generator', siteConfig.Generator);
     site.att('CompilerName', '');
     site.att('OSName', 'Mac OS X');
     site.att('Hostname', 'Darth-Mac.local');
-    site.att('OSRelease', '10.10.4');
-    site.att('OSVersion', '14E46');
+    site.att('OSRelease', '10.10.5');
+    site.att('OSVersion', '14F27');
     site.att('OSPlatform', 'x86_64');
     site.att('Is64Bits', '1');
     site.att('VendorString', 'GenuineIntel');
@@ -45,7 +47,7 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
     site.att('ProcessorCacheSize', '32768');
     site.att('NumberOfLogicalCPU', '12');
     site.att('NumberOfPhysicalCPU', '6');
-    site.att('TotalVirtualMemory', '2048');
+    site.att('TotalVirtualMemory', '1024');
     site.att('TotalPhysicalMemory', '16384');
     site.att('LogicalProcessorsPerPhysical', '16');
     site.att('ProcessorClockFrequency', '3500');
