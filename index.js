@@ -9,14 +9,16 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.xml');
   var reporterConfig = config.cdashReporter || {};
 
-  // output file
-  var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile || 'test-results.testxml'));
-
   // CDash site config for report
   var siteConfigPath = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.siteConfig));
   var cdashConfig = JSON.parse(fs.readFileSync(siteConfigPath, 'utf8'));
   var siteConfig = cdashConfig.site;
   var testConfig = cdashConfig.testConfig;
+
+  // output file
+  var outputFileName = reporterConfig.outputFileName || ('cdash-result' + (siteConfig.BuildStamp ? '-' + siteConfig.BuildStamp : '') + '.xml');
+  var outputFilePath = (reporterConfig.outputFolder || '') + '/' + outputFileName;
+  var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, outputFilePath));
 
   var site;
   var testing;
