@@ -100,13 +100,13 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 
     var pass;
     if (result.success) {
-      pass = 'Passed';
+      pass = 'passed';
     }
     else if (result.skipped) {
-      pass = 'Skipped';
+      pass = 'skipped';
     }
     else { // Test failed 
-      pass = 'Failed';
+      pass = 'failed';
     }
 
     testList.ele('Test', testFullName);
