@@ -8,9 +8,15 @@ var moment = require('moment');
 var CDashReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   var log = logger.create('reporter.xml');
   var reporterConfig = config.cdashReporter || {};
+
+  // output file
   var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile || 'test-results.testxml'));
+
+  // CDash site config for report
   var siteConfigPath = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.siteConfig));
-  var siteConfig = JSON.parse(fs.readFileSync(siteConfigPath, 'utf8'));
+  var cdashConfig = JSON.parse(fs.readFileSync(siteConfigPath, 'utf8'));
+  var siteConfig = cdashConfig.site;
+  var testConfig = cdashConfig.testConfig;
 
   var site;
   var testing;
@@ -33,24 +39,24 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
     site.att('BuildStamp', siteConfig.BuildStamp);
     site.att('Name', siteConfig.Name);
     site.att('Generator', siteConfig.Generator);
-    site.att('CompilerName', '');
-    site.att('OSName', 'Mac OS X');
-    site.att('Hostname', 'Darth-Mac.local');
-    site.att('OSRelease', '10.10.5');
-    site.att('OSVersion', '14F27');
-    site.att('OSPlatform', 'x86_64');
-    site.att('Is64Bits', '1');
-    site.att('VendorString', 'GenuineIntel');
-    site.att('VendorID', 'Intel Corporation');
-    site.att('FamilyID', '6');
-    site.att('ModelID', '62');
-    site.att('ProcessorCacheSize', '32768');
-    site.att('NumberOfLogicalCPU', '12');
-    site.att('NumberOfPhysicalCPU', '6');
-    site.att('TotalVirtualMemory', '1024');
-    site.att('TotalPhysicalMemory', '16384');
-    site.att('LogicalProcessorsPerPhysical', '16');
-    site.att('ProcessorClockFrequency', '3500');
+    site.att('CompilerName', siteConfig.CompilerName);
+    site.att('OSName', siteConfig.OSName);
+    site.att('Hostname', siteConfig.Hostname);
+    site.att('OSRelease', siteConfig.OSRelease);
+    site.att('OSVersion', siteConfig.OSVersion);
+    site.att('OSPlatform', siteConfig.OSPlatform);
+    site.att('Is64Bits', siteConfig.Is64Bits);
+    site.att('VendorString', siteConfig.VendorString);
+    site.att('VendorID', siteConfig.VendorID);
+    site.att('FamilyID', siteConfig.FamilyID);
+    site.att('ModelID', siteConfig.ModelID);
+    site.att('ProcessorCacheSize', siteConfig.ProcessorCacheSize);
+    site.att('NumberOfLogicalCPU', siteConfig.NumberOfLogicalCPU);
+    site.att('NumberOfPhysicalCPU', siteConfig.NumberOfPhysicalCPU);
+    site.att('TotalVirtualMemory', siteConfig.TotalVirtualMemory);
+    site.att('TotalPhysicalMemory', siteConfig.TotalPhysicalMemory);
+    site.att('LogicalProcessorsPerPhysical', siteConfig.LogicalProcessorsPerPhysical);
+    site.att('ProcessorClockFrequency', siteConfig.ProcessorClockFrequency);
     // TODO: set attibutes to the site node
 
     testing = site.ele('Testing');
@@ -115,8 +121,8 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
     test.att('Status', pass);
     test.ele('Name', result.description);
     test.ele('FullName', testFullName);
-    test.ele('Path', './Tests/AdapterJS');
-    test.ele('FullCommandLine', 'grunt test');
+    test.ele('Path', testConfig.Path);
+    test.ele('FullCommandLine', testConfig.FullCommandLine);
     test.ele('Results', pass);
   };
 
