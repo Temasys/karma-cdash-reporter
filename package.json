@@ -1,14 +1,18 @@
 {
   "name": "karma-cdash-reporter",
-  "version": "0.1.4",
-  "description": "A Karma plugin. Report results in a CDash format.",
+  "version": "0.1.0",
+  "description": "A Karma plugin. Reports results in a CDash compatible format.",
   "main": "index.js",
   "keywords": [
     "karma-plugin",
     "karma-reporter",
+    "cmake",
+    "ctest",
     "cdash"
   ],
-  "author": "Danny Tuppeny <danny+npm@tuppeny.com>",
+  "author": "Jacques-Olivier Hache <jo.hache@temasys.com.sg>",
+  // Forked from the karma-xml-reporter orginally written by:
+  // "author": "Danny Tuppeny <danny+npm@tuppeny.com>",
   "dependencies": {
     "moment": "^2.10.6",
     "xmlbuilder": "0.4.2"
