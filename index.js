@@ -17,7 +17,7 @@ var CDashReporter = function (baseReporterDecorator, config, logger, helper, for
 
   // output file
   var outputFileName = reporterConfig.outputFileName || ('cdash-result' + (siteConfig.BuildStamp ? '-' + siteConfig.BuildStamp : '') + '.xml');
-  var outputFilePath = (reporterConfig.outputFolder || '') + '/' + outputFileName;
+  var outputFilePath = (reporterConfig.outputFolder || '.') + '/' + outputFileName;
   var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, outputFilePath));
 
   var site;
