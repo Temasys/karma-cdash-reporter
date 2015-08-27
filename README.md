@@ -40,15 +40,17 @@ module.exports = function(config) {
 };
 ```
 
-**outputFolder [OPTIONAL]**\
-Path to the folder in which the report should be written.\
+**outputFolder [OPTIONAL]**
+
+Path to the folder in which the report should be written.
 Defaults to '.'.
 
-**outputFileName [OPTIONAL]** \
-Name of the file in which the report should be written (in the outputFolder).\
+**outputFileName [OPTIONAL]** 
+
+Name of the file in which the report should be written (in the outputFolder).
 Defaults to ```'cdash-result' + (siteConfig.BuildStamp ? '-' + siteConfig.BuildStamp : '') + '.xml'```.
 
-**siteConfig [MANDATORY]** \
+**siteConfig [MANDATORY]** 
 Path to a json file defined as follow:
 ```json
 {
@@ -82,12 +84,12 @@ Path to a json file defined as follow:
   }
 }
 ```
-These are valued that will be entered in your CDash xml document.\
+These are valued that will be entered in your CDash xml document.
 The important values are:
 
 Value | Description | CMake variable (if any)
------- | ----------- |-------------------
-`BuildName` | The name you gave to your build | CTEST_BUILD_NAME
-`BuildStamp` | The identifier of this specific build | file(STRINGS "${CTEST_BINARY_DIRECTORY}/Testing/TAG" KARMA_CTEST_TAG LIMIT_COUNT 1)
+----- | ----------- |-------------------
+`BuildName` | The name you gave to your build | `CTEST_BUILD_NAME`
+`BuildStamp` | The identifier of this specific build | `file(STRINGS "${CTEST_BINARY_DIRECTORY}/Testing/TAG" KARMA_CTEST_TAG LIMIT_COUNT 1)`
 |||If you set a specific track when you called ctest_start, you will have to happen "-YourTrackName"
-`Name` | The name of your build site | CTEST_SITE
+`Name` | The name of your build site | `CTEST_SITE`
