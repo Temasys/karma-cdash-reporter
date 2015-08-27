@@ -4,6 +4,7 @@
 A Karma plugin. Reports results in a CDash compatible format.
 
 ## Installation
+
 The easiest way is to keep `karma-cdash-reporter` as a dependency in your `package.json`.
 ```json
 {
@@ -18,7 +19,8 @@ You can simple do it by:
 
     $ npm install karma-cdash-reporter --save
 
-## Configuration
+## Configuration in Karma
+
 ```js
 // karma.conf.js
 module.exports = function(config) {
@@ -94,7 +96,7 @@ Value | Description | CMake variable (if any)
 |||If you set a specific track when you called ctest_start, you will have to happen "-YourTrackName"
 `Name` | The name of your build site | `CTEST_SITE`
 
-## Submit the results to CDash
+## Submission to CDash
 
 For some reason you need to send the configure and build reports BEFORE your send the test report.
 From your ctest script, run
