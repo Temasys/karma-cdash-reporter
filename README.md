@@ -93,3 +93,12 @@ Value | Description | CMake variable (if any)
 `BuildStamp` | The identifier of this specific build | `file(STRINGS "${CTEST_BINARY_DIRECTORY}/Testing/TAG" KARMA_CTEST_TAG LIMIT_COUNT 1)`
 |||If you set a specific track when you called ctest_start, you will have to happen "-YourTrackName"
 `Name` | The name of your build site | `CTEST_SITE`
+
+## Submit the results to CDash
+
+For some reason you need to send the configure and build reports BEFORE your send the test report.
+From your ctest script, run
+```bash
+  ctest_submit(PARTS Configure Build) #submit configure and build reports first
+  ctest_submit(FILES "Path/to/the/result/file") #submit tests results
+```
