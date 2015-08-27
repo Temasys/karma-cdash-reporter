@@ -11,8 +11,9 @@
     "cdash"
   ],
   "author": "Jacques-Olivier Hache <jo.hache@temasys.com.sg>",
-  // Forked from the karma-xml-reporter orginally written by:
-  // "author": "Danny Tuppeny <danny+npm@tuppeny.com>",
+  "//": "Forked from the karma-xml-reporter orginally written by:",
+  "//": "author",
+  "//": "Danny Tuppeny <danny+npm@tuppeny.com>",
   "dependencies": {
     "moment": "^2.10.6",
     "xmlbuilder": "0.4.2"
@@ -22,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/DanTup/karma-cdash-reporter.git"
+    "url": "git://github.com/Temasys/karma-cdash-reporter.git"
   },
   "bugs": {
-    "url": "https://github.com/DanTup/karma-cdash-reporter/issues"
+    "url": "https://github.com/Temasys/karma-cdash-reporter/issues"
   },
-  "homepage": "https://github.com/DanTup/karma-cdash-reporter#readme",
+  "homepage": "https://github.com/Temasys/karma-cdash-reporter#readme",
   "devDependencies": {
     "moment": "^2.10.6"
   },
