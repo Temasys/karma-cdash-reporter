@@ -86,7 +86,9 @@ Path to a json file defined as follow:
   }
 }
 ```
-These are valued that will be entered in your CDash xml document.
+These values will be used when generating your CDash xml document.
+
+A good way to generate this file is to use the [cmake configure_file command](http://www.cmake.org/cmake/help/latest/command/configure_file.html).
 The important values are:
 
 Value | Description | CMake variable (if any)
